@@ -5,7 +5,9 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 const uid = () => Math.random().toString(36).slice(2, 10);
 
 // ================= storage =================
-const KEY = 'timesgrader.v2';
+// PR previews live under /pr-preview/pr-N/ on the same site, so each preview gets its own storage
+const NS = (location.pathname.match(/pr-preview\/[^/]+/) || [''])[0].replace('pr-preview/', '');
+const KEY = 'timesgrader.v2' + (NS ? ':' + NS : '');
 let S = { key: null, papers: [], settings: { sound: true, apiKey: '', claudeAssist: true } };
 try { const raw = localStorage.getItem(KEY); if (raw) { const o = JSON.parse(raw); S.key = o.key || null; S.papers = o.papers || []; Object.assign(S.settings, o.settings || {}); } } catch (e) { /* storage unavailable */ }
 let saveT;
@@ -14,7 +16,7 @@ const memImg = {};
 let dbp = null;
 function idb() {
   if (!dbp) dbp = new Promise(res => {
-    try { const r = indexedDB.open('timesgrader', 1); r.onupgradeneeded = () => r.result.createObjectStore('pages'); r.onsuccess = () => res(r.result); r.onerror = () => res(null); } catch (e) { res(null); }
+    try { const r = indexedDB.open('timesgrader' + (NS ? ':' + NS : ''), 1); r.onupgradeneeded = () => r.result.createObjectStore('pages'); r.onsuccess = () => res(r.result); r.onerror = () => res(null); } catch (e) { res(null); }
   });
   return dbp;
 }

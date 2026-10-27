@@ -1,0 +1,26 @@
+# Every pull request gets its own live copy at https://<user>.github.io/<repo>/pr-preview/pr-<number>/
+# The action comments the link on the PR, updates it on each push, and removes it when the PR closes.
+name: PR preview
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: preview-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        if: github.event.action != 'closed'
+        with:
+          node-version: 22
+      - run: node scripts/build.mjs
+        if: github.event.action != 'closed'
+      - uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: dist

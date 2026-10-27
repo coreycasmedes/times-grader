@@ -12,11 +12,20 @@ gh repo create times-grader --private --source . --push
 ```
 
 ## Live on a phone (GitHub Pages)
-1. Go to **Settings → Pages → Source: GitHub Actions**.
-2. The workflow in `.github/workflows/pages.yml` builds and publishes on every push to `main`.
-3. Open `https://<you>.github.io/times-grader/` in Safari. Allow the camera, then add your Anthropic API key under **Settings**.
+1. Push to `main` once. The **Deploy** workflow creates a `gh-pages` branch.
+2. Go to **Settings → Pages → Source: Deploy from a branch**, then pick `gh-pages` and `/ (root)`.
+3. Go to **Settings → Actions → General → Workflow permissions** and select **Read and write**.
+4. Open `https://<you>.github.io/times-grader/` in Safari. Allow the camera, then add your Anthropic API key under **Settings**.
 
 GitHub Pages on a private repo needs a paid GitHub plan. On a free plan, make the repo public, or host `dist/index.html` on Netlify or Vercel instead. Any HTTPS static host works.
+
+## Pull request previews
+Every PR gets its own live copy at `https://<you>.github.io/times-grader/pr-preview/pr-<number>/`. This is done by `.github/workflows/preview.yml`, which uses [rossjrw/pr-preview-action](https://github.com/rossjrw/pr-preview-action).
+- The action posts the link as a PR comment and updates it on every push. You can open it on your phone and test the camera before merging.
+- The preview is deleted when the PR closes.
+- Merging to `main` doesn't wipe open previews, because `deploy.yml` skips the `pr-preview/` folder.
+- Each preview keeps its own saved key and papers, separate from the main app (see `NS` in `src/app.js`).
+- PRs from forks can't publish previews, because GitHub gives them a read-only token. Branches in this repo work.
 
 ## Inside Claude
 `dist/claude-artifact.html` is the same app without the document wrapper. It can be published as a Claude artifact with the `sample` (images) and `downloads` capabilities. There, the key is read through Claude without an API key. The camera is blocked, so use video or photos.

@@ -31,12 +31,11 @@ When the app runs on its own web address, add an Anthropic API key in **Settings
 
 ## Deploy to GitHub Pages
 
-1. Push this repo to GitHub.
-2. In the repo, go to **Settings → Pages → Source** and select **GitHub Actions**.
-3. Every push to `main` runs `.github/workflows/pages.yml` and publishes `dist/index.html`.
-4. Open `https://<user>.github.io/<repo>/` in Safari on the phone.
+1. Push to `main`. The **Deploy** workflow builds the app and publishes it to the `gh-pages` branch.
+2. In the repo, go to **Settings → Pages → Source: Deploy from a branch** and select `gh-pages`.
+3. Open `https://<user>.github.io/<repo>/` in Safari on the phone.
 
-More options: [docs/deploy.md](docs/deploy.md).
+Every pull request also gets a live preview at `…/pr-preview/pr-<number>/`, linked in a comment on the PR. See [docs/deploy.md](docs/deploy.md).
 
 ## Tests
 
